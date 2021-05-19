@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/User');
+const saucesRoutes = require('./routes/Sauces');
+const path = require('path');
 
 const db = require('./config/config');
 db.connect();
@@ -11,6 +13,7 @@ class App{
     constructor(){
         this.initHeaders();
         this.initRoutes();
+        this.initImgs();
     }
     initHeaders() {
         app.use((req, res, next) => {
@@ -19,13 +22,18 @@ class App{
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
             next();
           });
-          app.use(bodyParser.json());
         };
 
         initRoutes(){
+            app.use(bodyParser.json());
             app.use('/api/auth', userRoutes);
+            app.use('/api/sauces', saucesRoutes);
         };
-};
 
+        initImgs(){
+            app.use(bodyParser.json());
+            app.use('/images', express.static(path.join(__dirname, 'images')));
+        }
+};
 module.exports = app;
 new App();
