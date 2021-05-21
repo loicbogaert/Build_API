@@ -4,7 +4,7 @@ const userRoutes = require('./routes/User');
 const saucesRoutes = require('./routes/Sauces');
 const path = require('path');
 
-const db = require('./config/config');
+const db = require('./database/database');
 db.connect();
 
 const app = express();

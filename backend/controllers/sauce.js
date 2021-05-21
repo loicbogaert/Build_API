@@ -1,12 +1,10 @@
-const User = require('../models/User');
-const bcrypt = require('bcrypt');
 const Sauce = require('../models/Sauces');
 const fs = require('fs');
 
-class Database{
+/** Controllers for the sauces (delete, modify, add...) */
+
+class Sauces{
     constructor(){
-        this.signingUp();
-        this.logingIn();
         this.saucesArray();
         this.saucesUnique();
         this.addSauce();
@@ -14,46 +12,9 @@ class Database{
         this.deleteSauce();
     }
 
-
-    signingUp(){
-        exports.signup = (req, res, next) => {
-            bcrypt.hash(req.body.password, 10) 
-            .then(hash =>{
-                const user = new User({
-                    email: req.body.email,
-                    password: hash
-                });
-                user.save()
-                .then(() => res.status(201).json({ message: 'Utilisateur créé !'}))
-                .catch(error => res.status(400).json({ error }));
-            })
-            .catch(error => res.status(500).json({ error }));
-        };
-    };
-    
-    logingIn(){
-        exports.login = (req, res , next) => {
-            User.findOne({ email: req.body.email })
-             .then(user =>{
-                 if(!user) {
-                     return res.status(401).json({ error : 'Utilisateur non trouvé !'})
-                 }
-                 bcrypt.compare(req.body.password, user.password)
-                 .then(valid =>{
-                     if(!valid) {
-                        return res.status(401).json({ error : 'Mot de passe incorrect !'})
-                     }
-                     res.status(200).json({
-                         userId: user.id,
-                         token: 'TOKEN'
-                     });
-                 })
-                 .catch(error => res.status(500).json({ error }));
-             })
-             .catch(error => res.status(500).json({ error }));
-        };
-    };
-
+    /**
+     * List of all the sauces
+     */
     saucesArray(){
         exports.saucesArray = (req, res, next) => {
             Sauce.find()
@@ -62,6 +23,10 @@ class Database{
         };
     };
 
+
+    /**
+     * Get only one sauce
+     */
     saucesUnique(){
         exports.saucesUnique = (req, res, next) => {
             Sauce.findOne({ _id: req.params.id })
@@ -70,6 +35,9 @@ class Database{
         };
     };
 
+    /**
+     * Add a sauce to the list (creation)
+     */
     addSauce(){
         exports.addSauce = (req, res, next) => {
             const sauceObject = JSON.parse(req.body.sauce);
@@ -85,6 +53,9 @@ class Database{
         };
     };
 
+    /**
+     * Modifying a sauce
+     */
     modifySauce(){
         exports.modifySauce = (req, res, next) => {
             const sauceObject = req.file ?
@@ -98,6 +69,9 @@ class Database{
         };
     };
 
+    /**
+     * Deleting a sauce
+     */
     deleteSauce(){
         exports.deleteSauce = (req, res, next) => {
             Sauce.findOne({ _id: req.params.id })
@@ -115,5 +89,5 @@ class Database{
     };
 };
 
-new Database();
+new Sauces();
 
