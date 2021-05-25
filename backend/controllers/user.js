@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
 
     /** class User with controllers concerning Users informations (logs) */
 
@@ -42,8 +43,12 @@ class Users{
                             return res.status(401).json({ error : 'Mot de passe incorrect !'})
                          }
                          res.status(200).json({
-                             userId: user.id,
-                             token: 'TOKEN'
+                            userId: user._id,
+                            token: jwt.sign(
+                              { userId: user._id },
+                              'RANDOM_TOKEN_SECRET',
+                              { expiresIn: '24h' }
+                             )
                          });
                      })
                      .catch(error => res.status(500).json({ error }));

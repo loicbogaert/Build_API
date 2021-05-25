@@ -54,7 +54,7 @@ class Sauces{
     };
 
     /**
-     * Modifying a sauce
+     * Modify a sauce
      */
     modifySauce(){
         exports.modifySauce = (req, res, next) => {
@@ -70,7 +70,7 @@ class Sauces{
     };
 
     /**
-     * Deleting a sauce
+     * Delete a sauce
      */
     deleteSauce(){
         exports.deleteSauce = (req, res, next) => {
