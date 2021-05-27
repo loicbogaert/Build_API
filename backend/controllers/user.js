@@ -1,19 +1,14 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 
     /** class User with controllers concerning Users informations (logs) */
 
 class Users{
-    constructor(){
-        this.signingUp();
-        this.logingIn();
-    }
 
     /** Singup controller (password with HASH and email) */
 
-        signingUp(){
-            exports.signup = (req, res, next) => {
+        signingUp(req, res, next){
                 bcrypt.hash(req.body.password, 10) 
                 .then(hash =>{
                     const user = new User({
@@ -26,12 +21,10 @@ class Users{
                 })
                 .catch(error => res.status(500).json({ error }));
             };
-        };
         
     /** Loging controller (Find existing email and password (match hashed password) + Token creation) */
 
-        logingIn(){
-            exports.login = (req, res , next) => {
+        logingIn(req, res , next){
                 User.findOne({ email: req.body.email })
                  .then(user =>{
                      if(!user) {
@@ -56,6 +49,5 @@ class Users{
                  .catch(error => res.status(500).json({ error }));
             };
         };
-    };
 
-new Users();
+module.exports = Users;
