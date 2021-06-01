@@ -31,8 +31,8 @@ class Sauces{
             const sauce = new Sauce({
                 ...sauceObject,
                 imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-                usersLiked : [],
-                usersDisliked : [],
+                usersliked : [],
+                usersdisliked : [],
                 likes : 0,
                 dislikes : 0
 
@@ -71,7 +71,66 @@ class Sauces{
             })
             .catch(error => res.status(500).json({ error }))
     };
-};
 
+    /**Likes and dislikes */
+
+    likeSauce(req, res, next){
+        const userId = req.body.userId;
+        const likes = req.body.like;
+
+        Sauce.findOne({ _id: req.params.id })
+        .then(sauce => {
+          switch(likes){
+              case 1 : /**If user likes the sauce : push the userId in the usersLiked Array + increments likes by 1 */
+                Sauce.updateOne(
+                    {_id : req.params.id},
+                    {$push : {usersLiked : userId}, $inc: {likes: +1}}
+                )
+
+            .then(()=> res.status(200).json({ message : 'sauce liked'}))
+            .catch(error => res.status(400).json({error}));
+            sauce.save();
+            break;
+            }
+
+            switch(likes){
+            case -1 : /**If user dislikes the sauce : push the userId in the usersDisliked Array + increments dislikes by 1 */
+                Sauce.updateOne(
+                    {_id : req.params.id},
+                    {$push : {usersDisliked : userId}, $inc: {dislikes: +1}}
+                )
+
+            .then(()=> res.status(200).json({ message : 'sauce disliked'}))
+            .catch(error => res.status(400).json({error}));
+            sauce.save();
+            break;
+            }
+
+            switch(likes){
+            case 0 :
+                if({ usersLiked : {$in: [userId]}}) { /** If there is the actual UserId in the usersLiked array, delete it and decrement likes by 1 */
+                    Sauce.updateOne(
+                        {_id : req.params.id},
+                        {$pull: {usersLiked : userId}, $inc: {likes: -1}}
+                    )
+                    .then(()=> res.status(200).json({ message : 'Like reseted'}))
+                    .catch(error => res.status(400).json({error}));
+                    sauce.save();
+
+                } else if({usersDisliked : {$in: [userId]}}) { /** If there is the actual UserId in the usersDisliked array, delete it and decrement dislikes by 1 */
+                    Sauce.updateOne(
+                        {_id : req.params.id},
+                        {$pull: {usersDisliked : userId}, $inc: {dislikes: -1}}
+                    )
+                    .then(()=> res.status(200).json({ message : 'Like reseted'}))
+                    .catch(error => res.status(400).json({error}));
+                    sauce.save();
+                    break;
+                }
+            }
+        }) 
+        .catch(error => res.status(500).json({error}));
+    }
+}
 module.exports = Sauces;
 

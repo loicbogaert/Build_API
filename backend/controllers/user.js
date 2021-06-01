@@ -1,6 +1,13 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const MaskData = require('maskdata');
+const emailMask2Options = {
+    maskWith: "*",
+    unmaskedStartCharacterBeforeAt : 3,
+    unmaskedEndCharactersAfterAt: 2,
+    laskAtTheRate : false
+};
 
     /** class User with controllers concerning Users informations (logs) */
 
@@ -9,10 +16,12 @@ class Users{
     /** Singup controller (password with HASH and email) */
 
         signingUp(req, res, next){
-                bcrypt.hash(req.body.password, 10) 
+            const email = req.body.email;
+            const maskedEmail = MaskData.maskEmail2(email, emailMask2Options);  
+                bcrypt.hash(req.body.password, 10)
                 .then(hash =>{
                     const user = new User({
-                        email: req.body.email,
+                        email: maskedEmail,
                         password: hash
                     });
                     user.save()
@@ -25,7 +34,9 @@ class Users{
     /** Loging controller (Find existing email and password (match hashed password) + Token creation) */
 
         logingIn(req, res , next){
-                User.findOne({ email: req.body.email })
+            const email = req.body.email;
+            const maskedEmail = MaskData.maskEmail2(email, emailMask2Options);  
+                User.findOne({ email: maskedEmail })
                  .then(user =>{
                      if(!user) {
                          return res.status(401).json({ error : 'Utilisateur non trouvé !'})
