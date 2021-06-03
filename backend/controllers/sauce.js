@@ -35,8 +35,8 @@ class Sauces{
                 usersdisliked : [],
                 likes : 0,
                 dislikes : 0
-
             });
+
             sauce.save()
             .then(() => res.status(201).json({ message: 'Sauce enregistrée !'}))
             .catch(error => res.status(400).json({ error }));
@@ -51,9 +51,10 @@ class Sauces{
                     ...JSON.parse(req.body.sauce),
                     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
                 } : { ...req.body };
+
             Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-            .then (() => res.status(200).json({ message: 'Sauce modifiée !'}))
-            .catch(error => res.status(400).json({ error }));
+                .then (() => res.status(200).json({ message: 'Sauce modifiée !'}))
+                .catch(error => res.status(400).json({ error }));
         };
 
     /**
@@ -78,59 +79,60 @@ class Sauces{
         const userId = req.body.userId;
         const likes = req.body.like;
 
-        Sauce.findOne({ _id: req.params.id })
-        .then(sauce => {
-          switch(likes){
-              case 1 : /**If user likes the sauce : push the userId in the usersLiked Array + increments likes by 1 */
-                Sauce.updateOne(
-                    {_id : req.params.id},
-                    {$push : {usersLiked : userId}, $inc: {likes: +1}}
-                )
+            Sauce.findOne({ _id: req.params.id })
+                .then(sauce => {
 
-            .then(()=> res.status(200).json({ message : 'sauce liked'}))
-            .catch(error => res.status(400).json({error}));
-            sauce.save();
-            break;
-            }
+                    switch(likes){
+                        case 1 : /**Front sends 1 */ /**If user likes the sauce : push the userId in the usersLiked Array + increments likes by 1 */
+                            Sauce.updateOne(
+                                {_id : req.params.id},
+                                {$push : {usersLiked : userId}, $inc: {likes: +1}})
 
-            switch(likes){
-            case -1 : /**If user dislikes the sauce : push the userId in the usersDisliked Array + increments dislikes by 1 */
-                Sauce.updateOne(
-                    {_id : req.params.id},
-                    {$push : {usersDisliked : userId}, $inc: {dislikes: +1}}
-                )
+                                .then(()=>{
+                                    sauce.save();
+                                    res.status(200).json({ message : 'sauce liked'})})
+                                .catch(error => res.status(400).json({error}));
+                        break;
+            
+                        case -1 : /**Front sends -1*/ /**If user dislikes the sauce : push the userId in the usersDisliked Array + increments dislikes by 1 */
+                            Sauce.updateOne(
+                                {_id : req.params.id},
+                                {$push : {usersDisliked : userId}, $inc: {dislikes: +1}})
 
-            .then(()=> res.status(200).json({ message : 'sauce disliked'}))
-            .catch(error => res.status(400).json({error}));
-            sauce.save();
-            break;
-            }
+                                .then(()=> {
+                                    sauce.save();
+                                    res.status(200).json({ message : 'sauce disliked'})})
+                                .catch(error => res.status(400).json({error}));
+                        break;
+        
+                        case 0 : /**Front sends 0*/ /** The users doesn't like or dislike a sauce anymore */
 
-            switch(likes){
-            case 0 :
-                if({ usersLiked : {$in: [userId]}}) { /** If there is the actual UserId in the usersLiked array, delete it and decrement likes by 1 */
-                    Sauce.updateOne(
-                        {_id : req.params.id},
-                        {$pull: {usersLiked : userId}, $inc: {likes: -1}}
-                    )
-                    .then(()=> res.status(200).json({ message : 'Like reseted'}))
-                    .catch(error => res.status(400).json({error}));
-                    sauce.save();
+                            if({ usersLiked : {$in: [userId]}}) { /** If there is the actual UserId in the usersLiked array, delete it and decrement likes by 1 */
+                                Sauce.updateOne(
+                                    {_id : req.params.id},
+                                    {$pull: {usersLiked : userId}, $inc: {likes: -1}})
 
-                } else if({usersDisliked : {$in: [userId]}}) { /** If there is the actual UserId in the usersDisliked array, delete it and decrement dislikes by 1 */
-                    Sauce.updateOne(
-                        {_id : req.params.id},
-                        {$pull: {usersDisliked : userId}, $inc: {dislikes: -1}}
-                    )
-                    .then(()=> res.status(200).json({ message : 'Like reseted'}))
-                    .catch(error => res.status(400).json({error}));
-                    sauce.save();
-                    break;
-                }
-            }
-        }) 
+                                .then(()=> res.status(200).json({ message : 'Like reseted'}))
+                                .catch(error => res.status(400).json({error}));
+                                sauce.save();
+                            }
+                
+                            else if({usersDisliked : {$in: [userId]}}) { /** If there is the actual UserId in the usersDisliked array, delete it and decrement dislikes by 1 */
+                                Sauce.updateOne(
+                                    {_id : req.params.id},
+                                    {$pull: {usersDisliked : userId}, $inc: {dislikes: -1}}
+                                )
+                                    .then(()=> {sauce.save();
+                                        res.status(200).json({ message : 'Like reseted'})
+                                    })
+                                    .catch(error => res.status(400).json({error}));
+                        break;
+                        };
+                    };
+                })
         .catch(error => res.status(500).json({error}));
-    }
-}
+    };
+};
+
 module.exports = Sauces;
 

@@ -9,31 +9,23 @@ db.connect();
 
 const app = express();
 
-class App{
-    constructor(){
-        this.initHeaders();
-        this.initRoutes();
-        this.initImgs();
-    }
-    initHeaders(req, res, next) {
+    /**headers */
         app.use((req, res, next) => {
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
             next();
           });
-        };
 
-        initRoutes(){
+    /**init routes */
             app.use(bodyParser.json());
             app.use('/api/auth', userRoutes);
             app.use('/api/sauces', saucesRoutes);
-        };
-
-        initImgs(){
+        
+    /**image folder */
             app.use(bodyParser.json());
             app.use('/images', express.static(path.join(__dirname, 'images')));
-        }
-};
+        
+
 module.exports = app;
-new App();
+
