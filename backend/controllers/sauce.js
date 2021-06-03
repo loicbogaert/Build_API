@@ -1,5 +1,6 @@
 const Sauce = require('../models/Sauces');
 const fs = require('fs');
+const { isTemplateExpression } = require('typescript');
 
 /** Controllers for the sauces (delete, modify, add...) */
 
@@ -81,7 +82,6 @@ class Sauces{
 
             Sauce.findOne({ _id: req.params.id })
                 .then(sauce => {
-
                     switch(likes){
                         case 1 : /**Front sends 1 */ /**If user likes the sauce : push the userId in the usersLiked Array + increments likes by 1 */
                             Sauce.updateOne(
@@ -104,35 +104,31 @@ class Sauces{
                                     res.status(200).json({ message : 'sauce disliked'})})
                                 .catch(error => res.status(400).json({error}));
                         break;
-        
+            
                         case 0 : /**Front sends 0*/ /** The users doesn't like or dislike a sauce anymore */
+                        if(sauce.usersLiked.includes(userId)){
+                        Sauce.updateOne(
+                            {_id : req.params.id},
+                            {$pull: {usersLiked : userId}, $inc: {likes: -1}})
 
-                            if({ usersLiked : {$in: [userId]}}) { /** If there is the actual UserId in the usersLiked array, delete it and decrement likes by 1 */
-                                Sauce.updateOne(
-                                    {_id : req.params.id},
-                                    {$pull: {usersLiked : userId}, $inc: {likes: -1}})
-
-                                .then(()=> res.status(200).json({ message : 'Like reseted'}))
-                                .catch(error => res.status(400).json({error}));
-                                sauce.save();
+                        .then(()=> {sauce.save();
+                            res.status(200).json({ message : 'Like reseted'})})
+                        .catch(error => res.status(400).json({error}));    
+                    }
+                        else if (sauce.usersDisliked.includes(userId)) {
+                            Sauce.updateOne(
+                                {_id : req.params.id},
+                                {$pull: {usersDisliked : userId}, $inc: {dislikes: -1}})
+    
+                            .then(()=> {sauce.save();
+                                res.status(200).json({ message : 'dislike reseted'})})
+                            .catch(error => res.status(400).json({error}));
                             }
-                
-                            else if({usersDisliked : {$in: [userId]}}) { /** If there is the actual UserId in the usersDisliked array, delete it and decrement dislikes by 1 */
-                                Sauce.updateOne(
-                                    {_id : req.params.id},
-                                    {$pull: {usersDisliked : userId}, $inc: {dislikes: -1}}
-                                )
-                                    .then(()=> {sauce.save();
-                                        res.status(200).json({ message : 'Like reseted'})
-                                    })
-                                    .catch(error => res.status(400).json({error}));
                         break;
-                        };
                     };
-                })
-        .catch(error => res.status(500).json({error}));
+                });
+        }
     };
-};
 
 module.exports = Sauces;
 
