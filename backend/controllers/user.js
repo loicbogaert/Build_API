@@ -1,5 +1,6 @@
 const User = require('../models/User');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt'),
+SALT_WORK_FACTOR = 10;
 const jwt = require('jsonwebtoken');
 const MaskData = require('maskdata');
 const emailMask2Options = {
@@ -9,27 +10,38 @@ const emailMask2Options = {
     laskAtTheRate : false
 };
 
+
     /** class User with controllers concerning Users informations (logs) */
 
 class Users{
 
     /** Singup controller (password with HASH and masked email) */
+    signingUp(req, res, next){
+        const email = req.body.email;
+        const maskedEmail = MaskData.maskEmail2(email, emailMask2Options);  
 
-        signingUp(req, res, next){
-            const email = req.body.email;
-            const maskedEmail = MaskData.maskEmail2(email, emailMask2Options);  
-                bcrypt.hash(req.body.password, 10)
+        /**Test for secured password */
+    if(/^(?=.*[A-Za-z1-9])(?=.*[0-9])(?=.*[A-Z])[^){}\[\]\*\\"'!=;,:§]{7,}/.test(req.body.password)) { 
+         /**generate salt */
+           bcrypt.genSalt(SALT_WORK_FACTOR)
+           .then(salt => {
+               /**hash password */
+                bcrypt.hash(req.body.password, salt)
                 .then(hash =>{
                     const user = new User({
-                        email: maskedEmail,
-                        password: hash
-                    });
+                            email: maskedEmail,
+                            password: hash
+                });
                     user.save()
                     .then(() => res.status(201).json({ message: 'Utilisateur créé !'}))
-                    .catch(error => res.status(400).json({ error }));
+                    .catch(error => res.status(400).json({ error }))
                 })
                 .catch(error => res.status(500).json({ error }));
-            };
+        })
+    }  else {
+        throw new Error (res.status(400).json({ message : 'Votre mot de passe doit contenir au minimum 7 caractères, une majuscule et deux chiffres'}))
+    }
+};
         
     /** Loging controller (Find existing email and password (match hashed password) + Token creation) */
 
@@ -44,10 +56,7 @@ class Users{
                      }
                      
                      bcrypt.compare(req.body.password, user.password)
-                     .then(valid =>{
-                         if(!valid) {
-                            return res.status(401).json({ error : 'Mot de passe incorrect !'})
-                         }
+                     .then(() =>{
                          res.status(200).json({
                             userId: user._id,     
                             token: jwt.sign(

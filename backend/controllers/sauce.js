@@ -1,6 +1,5 @@
 const Sauce = require('../models/Sauces');
 const fs = require('fs');
-const { isTemplateExpression } = require('typescript');
 
 /** Controllers for the sauces (delete, modify, add...) */
 
@@ -88,10 +87,10 @@ class Sauces{
                                 {_id : req.params.id},
                                 {$push : {usersLiked : userId}, $inc: {likes: +1}})
 
-                                .then(()=>{
-                                    sauce.save();
-                                    res.status(200).json({ message : 'sauce liked'})})
-                                .catch(error => res.status(400).json({error}));
+                            .then(()=>{
+                                sauce.save();
+                                res.status(200).json({ message : 'sauce liked'})})
+                            .catch(error => res.status(400).json({error}));
                         break;
             
                         case -1 : /**Front sends -1*/ /**If user dislikes the sauce : push the userId in the usersDisliked Array + increments dislikes by 1 */
@@ -99,10 +98,10 @@ class Sauces{
                                 {_id : req.params.id},
                                 {$push : {usersDisliked : userId}, $inc: {dislikes: +1}})
 
-                                .then(()=> {
-                                    sauce.save();
-                                    res.status(200).json({ message : 'sauce disliked'})})
-                                .catch(error => res.status(400).json({error}));
+                            .then(()=> {
+                                sauce.save();
+                                res.status(200).json({ message : 'sauce disliked'})})
+                            .catch(error => res.status(400).json({error}));
                         break;
             
                         case 0 : /**Front sends 0*/ /** The users doesn't like or dislike a sauce anymore */

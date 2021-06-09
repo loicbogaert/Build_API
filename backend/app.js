@@ -25,7 +25,6 @@ const app = express();
     /**image folder */
             app.use(bodyParser.json());
             app.use('/images', express.static(path.join(__dirname, 'images')));
-        
 
 module.exports = app;
 
