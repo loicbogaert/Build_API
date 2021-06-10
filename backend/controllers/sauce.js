@@ -105,29 +105,29 @@ class Sauces{
                         break;
             
                         case 0 : /**Front sends 0*/ /** The users doesn't like or dislike a sauce anymore */
-                        if(sauce.usersLiked.includes(userId)){
-                        Sauce.updateOne(
-                            {_id : req.params.id},
-                            {$pull: {usersLiked : userId}, $inc: {likes: -1}})
-
-                        .then(()=> {sauce.save();
-                            res.status(200).json({ message : 'Like reseted'})})
-                        .catch(error => res.status(400).json({error}));    
-                    }
-                        else if (sauce.usersDisliked.includes(userId)) {
+                            if(sauce.usersLiked.includes(userId)){
                             Sauce.updateOne(
                                 {_id : req.params.id},
-                                {$pull: {usersDisliked : userId}, $inc: {dislikes: -1}})
-    
+                                {$pull: {usersLiked : userId}, $inc: {likes: -1}})
+
                             .then(()=> {sauce.save();
-                                res.status(200).json({ message : 'dislike reseted'})})
-                            .catch(error => res.status(400).json({error}));
+                                res.status(200).json({ message : 'Like reseted'})})
+                            .catch(error => res.status(400).json({error}));    
+                            }
+                            else if (sauce.usersDisliked.includes(userId)) {
+                                Sauce.updateOne(
+                                    {_id : req.params.id},
+                                    {$pull: {usersDisliked : userId}, $inc: {dislikes: -1}})
+    
+                                .then(()=> {sauce.save();
+                                    res.status(200).json({ message : 'dislike reseted'})})
+                                .catch(error => res.status(400).json({error}));
                             }
                         break;
                     };
                 });
-        }
-    };
+    }
+};
 
 module.exports = Sauces;
 

@@ -21,7 +21,7 @@ class Users{
         const maskedEmail = MaskData.maskEmail2(email, emailMask2Options);  
 
         /**Test for secured password */
-    if(/^(?=.*[A-Za-z1-9])(?=.*[0-9])(?=.*[A-Z])[^){}\[\]\*\\"'!=;,:§]{7,}/.test(req.body.password)) { 
+    if(/^(?=.*[A-Za-z1-9])(?=.*[0-9])(?=.*[A-Z])[^){}\[\]\*\\"'!=;,:§]{8,}/.test(req.body.password)) { 
          /**generate salt */
            bcrypt.genSalt(SALT_WORK_FACTOR)
            .then(salt => {
@@ -39,7 +39,8 @@ class Users{
                 .catch(error => res.status(500).json({ error }));
         })
     }  else {
-        throw new Error (res.status(400).json({ message : 'Votre mot de passe doit contenir au minimum 7 caractères, une majuscule et deux chiffres'}))
+       res.statusMessage = ('Votre mot de passe doit contenir au minimum 7 caractères, une majuscule et deux chiffres')
+       res.status(400).end()
     }
 };
         
