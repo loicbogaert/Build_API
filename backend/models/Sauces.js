@@ -5,13 +5,13 @@ const sauceSchema = mongoose.Schema({
     manufacturer : { type : String, required: true, validate : /^(?=.*[A-Za-z1-9])[^\/){}\]\]$\\"'!=;,:§]{2,}/},
     description : { type : String, required: true, validate : /^(?=.*[A-Za-z1-9])[^\/){}\]\]$\\"'!=;,:§]{2,}/},
     mainPepper : { type : String, required: true, validate : /^(?=.*[A-Za-z1-9])[^\/){}\]\]$\\"'!=;,:§]{2,}/},
-    heat : { type : Number, required: true, validate : /^(?=.*[A-Za-z1-9])[^\/){}\]\]$\\"'!=;,:§]{2,}/},
-    imageUrl : { type : String, required: true, validate : /^(?=.*[A-Za-z1-9])[^\/){}\]\]$\\"'!=;,:§]{2,}/},
-    userId : { type : String, required: true, validate : /^(?=.*[A-Za-z1-9])[^\/){}\]\]$\\"'!=;,:§]{2,}/},
-    likes : { type : Number, required: true, validate : /^(?=.*[A-Za-z1-9])[^\/){}\]\]$\\"'!=;,:§]{2,}/},
-    dislikes : { type : Number, required: true, validate : /^(?=.*[A-Za-z1-9])[^\/){}\]\]$\\"'!=;,:§]{2,}/},
-    usersLiked : { type : [String], required: true, validate : /^(?=.*[A-Za-z1-9])[^\/){}\]\]$\\"'!=;,:§]{2,}/},
-    usersDisliked : { type : [String], required: true, validate : /^(?=.*[A-Za-z1-9])[^\/){}\]\]$\\"'!=;,:§]{2,}/}
+    heat : { type : Number, required: true},
+    imageUrl : { type : String, required: true},
+    userId : { type : String, required: true},
+    likes : { type : Number, required: true},
+    dislikes : { type : Number, required: true},
+    usersLiked : { type : [String], required: true},
+    usersDisliked : { type : [String], required: true}
 });
 
 module.exports = mongoose.model('ListOfSauces', sauceSchema);

@@ -73,7 +73,9 @@ class Sauces{
             .catch(error => res.status(500).json({ error }))
     };
 
-    /**Likes and dislikes */
+    /**
+     * Likes and dislikes
+     */
 
     likeSauce(req, res, next){
         const userId = req.body.userId;
@@ -82,7 +84,10 @@ class Sauces{
             Sauce.findOne({ _id: req.params.id })
                 .then(sauce => {
                     switch(likes){
-                        case 1 : /**Front sends 1 */ /**If user likes the sauce : push the userId in the usersLiked Array + increments likes by 1 */
+                 
+                /**Front sends 1 */ /**If user likes the sauce : push the userId in the usersLiked Array + increments likes by 1 */     
+                        
+                        case 1 : 
                             Sauce.updateOne(
                                 {_id : req.params.id},
                                 {$push : {usersLiked : userId}, $inc: {likes: +1}})
@@ -93,7 +98,9 @@ class Sauces{
                             .catch(error => res.status(400).json({error}));
                         break;
             
-                        case -1 : /**Front sends -1*/ /**If user dislikes the sauce : push the userId in the usersDisliked Array + increments dislikes by 1 */
+                /**Front sends -1*/ /**If user dislikes the sauce : push the userId in the usersDisliked Array + increments dislikes by 1 */
+
+                        case -1 :
                             Sauce.updateOne(
                                 {_id : req.params.id},
                                 {$push : {usersDisliked : userId}, $inc: {dislikes: +1}})
@@ -104,7 +111,9 @@ class Sauces{
                             .catch(error => res.status(400).json({error}));
                         break;
             
-                        case 0 : /**Front sends 0*/ /** The users doesn't like or dislike a sauce anymore */
+                /**Front sends 0*/ /** The users doesn't like or dislike a sauce anymore */
+
+                        case 0 :
                             if(sauce.usersLiked.includes(userId)){
                             Sauce.updateOne(
                                 {_id : req.params.id},
