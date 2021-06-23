@@ -7,7 +7,7 @@ const emailMask2Options = {
     maskWith: "*",
     unmaskedStartCharacterBeforeAt : 3,
     unmaskedEndCharactersAfterAt: 2,
-    laskAtTheRate : false
+    maskAtTheRate : false
 };
 
 
