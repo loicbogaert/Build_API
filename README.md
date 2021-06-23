@@ -12,7 +12,7 @@ Démarrer `ng serve` pour avoir accès au serveur de développement. Rendez-vous
 
 Ouvrir le terminal : 1) npm i node-sass. <br>
                      2) npm start. <br>
-                     3) Ouvrir le fichier "backend" dans le terminal. <br>
+                     3) Ouvrir le dossier "backend" dans le terminal. <br>
                      4) npm i mongoose. <br>
                      5) nodemon server. <br>
                      6) Se rendre sur localhost:4200
