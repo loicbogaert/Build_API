@@ -2,13 +2,10 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt'),
 SALT_WORK_FACTOR = 10;
 const jwt = require('jsonwebtoken');
-const MaskData = require('maskdata');
-const emailMask2Options = {
-    maskWith: "*",
-    unmaskedStartCharacterBeforeAt : 3,
-    unmaskedEndCharactersAfterAt: 2,
-    maskAtTheRate : false
-};
+const CryptoJS = require('crypto-js');
+
+require('dotenv').config();
+const TOKEN = process.env.SECRET_TOKEN;
 
 
     /** class User with controllers concerning Users informations (logs) */
@@ -18,8 +15,10 @@ class Users{
     /** Singup controller (password with HASH and masked email) */
     signingUp(req, res, next){
         const email = req.body.email;
-        const maskedEmail = MaskData.maskEmail2(email, emailMask2Options);  
-
+        var key = CryptoJS.enc.Hex.parse("000102030405060708090a0b0c0d0e0f");
+        var iv = CryptoJS.enc.Hex.parse("00000000000000000000000000000000");
+        var encrypted = CryptoJS.AES.encrypt(email, key,{iv:iv}).toString();
+       
             /**Test for secured password */
         if(/^(?=.*[A-Za-z1-9])(?=.*[0-9])(?=.*[A-Z])[^){}\[\]\*\\"'!=;,:§]{8,}/.test(req.body.password)) { 
              /**generate salt */
@@ -29,7 +28,7 @@ class Users{
                     bcrypt.hash(req.body.password, salt)
                     .then(hash =>{
                         const user = new User({
-                            email: maskedEmail,
+                            email: encrypted,
                             password: hash
                         });
                     user.save()
@@ -39,8 +38,8 @@ class Users{
                 .catch(error => res.status(500).json({ error }));
             })
         }  else {
-        res.statusMessage = ('Votre mot de passe doit contenir au minimum 7 caractères, une majuscule et deux chiffres')
-        res.status(400).end()
+            res.statusMessage = ('Votre mot de passe doit contenir au minimum 8 caractères, une majuscule et un chiffre')
+            res.status(400).end()
         }
     };
         
@@ -48,31 +47,33 @@ class Users{
 
         logingIn(req, res , next){
             const email = req.body.email;
-            const maskedEmail = MaskData.maskEmail2(email, emailMask2Options);  
-                User.findOne({ email: maskedEmail })
+            const password = req.body.password;
+            var key = CryptoJS.enc.Hex.parse("000102030405060708090a0b0c0d0e0f");
+            var iv = CryptoJS.enc.Hex.parse("00000000000000000000000000000000");
+            var encrypted = CryptoJS.AES.encrypt(email, key,{iv:iv}).toString();
+                User.findOne({email : encrypted})
                  .then(user =>{
                      if(!user) {
                          return res.status(401).json({ error : 'Utilisateur non trouvé !'})
                      }
-                     
-                     bcrypt.compare(req.body.password, user.password, (err, data) => {
+                     bcrypt.compare(password, user.password, (err, data) => {
                         if (err) throw (error => res.status(500).json({ error }));
         
                         /**if both passwords match */
 
                         if (data) {
                             return res.status(200).json({
-                                 userId: user._id,     
+                                userId: user._id,     
                                 token: jwt.sign(
                                   { userId: user._id },
-                                  'RANDOM_TOKEN_SECRET',
+                                    TOKEN,
                                   { expiresIn: '24h' }) 
                                 })
 
                         /**if passwords do not match*/
 
                         } else {
-                        return res.status(401).json({ error : "Mot de passe incorrect" })
+                            return res.status(401).json({ error : "Mot de passe incorrect" })
                         };
                     });
                 })
