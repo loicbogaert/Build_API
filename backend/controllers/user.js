@@ -15,8 +15,8 @@ class Users{
     /** Singup controller (password with HASH and masked email) */
     signingUp(req, res, next){
         const email = req.body.email;
-        var key = CryptoJS.enc.Hex.parse("000102030405060708090a0b0c0d0e0f");
-        var iv = CryptoJS.enc.Hex.parse("00000000000000000000000000000000");
+        var key = CryptoJS.enc.Hex.parse(CRYPTOJS_KEY);
+        var iv = CryptoJS.enc.Hex.parse(CRYPTOJS_IV);
         var encrypted = CryptoJS.AES.encrypt(email, key,{iv:iv}).toString();
        
             /**Test for secured password */
@@ -48,8 +48,8 @@ class Users{
         logingIn(req, res , next){
             const email = req.body.email;
             const password = req.body.password;
-            var key = CryptoJS.enc.Hex.parse("000102030405060708090a0b0c0d0e0f");
-            var iv = CryptoJS.enc.Hex.parse("00000000000000000000000000000000");
+            var key = CryptoJS.enc.Hex.parse(CRYPTOJS_KEY);
+            var iv = CryptoJS.enc.Hex.parse(CRYPTOJS_IV);
             var encrypted = CryptoJS.AES.encrypt(email, key,{iv:iv}).toString();
                 User.findOne({email : encrypted})
                  .then(user =>{
