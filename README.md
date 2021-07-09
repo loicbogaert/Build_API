@@ -10,7 +10,13 @@ Démarrer `ng serve` pour avoir accès au serveur de développement. Rendez-vous
 
 ## Pour démarrer le projet simplement
 
-Ouvrir le terminal : 1) npm i node-sass. <br>
+-> Créer un fichier ".env" dans le fichier "backend" contenant : 1) SECRET_TOKEN= (Clé qui sera utilisée pour le token d'authentification)
+                                                                 2) BDD_LOGIN= '(Lien de connection à la base de donnée mongodb)'
+                                                                 3) CRYPTOJS_KEY= "(Clé qui sera utilisée pour récupérer les données chiffrée par cryptoJS)"
+                                                                 4) CRYPTOJS_IV= "(Vecteur d'initialisation pour cryptoJS)"
+
+
+-> Ouvrir le terminal : 1) npm i node-sass. <br>
                      2) npm start. <br>
                      3) Ouvrir le dossier "backend" dans le terminal. <br>
                      4) npm i mongoose. <br>
