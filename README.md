@@ -6,6 +6,6 @@ Pour faire fonctionner le projet, vous devez installer node-sass à part.
 
 ## Ouvrir le projet simplement
 
--> Ouvrir le terminal : <br> 1) npm i node-sass. <br>
-                     2) npm start. <br>
+-> Ouvrir le terminal : <br> 1) `npm i node-sass` <br>
+                     2) `npm start` <br>
                      3) Se rendre sur `http://localhost:4200/` sur votre navigateur
