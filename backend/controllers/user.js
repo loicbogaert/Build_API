@@ -18,6 +18,7 @@ class Users{
         var key = CryptoJS.enc.Hex.parse(process.env.CRYPTOJS_KEY);
         var iv = CryptoJS.enc.Hex.parse(process.env.CRYPTOJS_IV);
         var encrypted = CryptoJS.AES.encrypt(email, key,{iv:iv}).toString();
+
        
             /**Test for secured password */
         if(/^(?=.*[A-Za-z1-9])(?=.*[0-9])(?=.*[A-Z])[^){}\[\]\*\\"'!=;,:§]{8,}/.test(req.body.password)) { 
