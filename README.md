@@ -4,15 +4,8 @@ Le projet a été généré avec [Angular CLI](https://github.com/angular/angula
 
 Pour faire fonctionner le projet, vous devez installer node-sass à part.
 
-## Development server
+## Ouvrir le projet simplement
 
-Démarrer `ng serve` pour avoir accès au serveur de développement. Rendez-vous sur `http://localhost:4200/`. L'application va se recharger automatiquement si vous modifiez un fichier source.
-
-## Pour démarrer le projet simplement
-
-Ouvrir le terminal : 1) npm i node-sass. <br>
-                     2) npm start. <br>
-                     3) Ouvrir le dossier "backend" dans le terminal. <br>
-                     4) npm i mongoose. <br>
-                     5) nodemon server. <br>
-                     6) Se rendre sur localhost:4200
+-> Ouvrir le terminal : <br> 1) `npm i node-sass` <br>
+                     2) `npm start` <br>
+                     3) Se rendre sur `http://localhost:4200/` sur votre navigateur
